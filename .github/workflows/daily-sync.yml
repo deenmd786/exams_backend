@@ -1,0 +1,42 @@
+name: Daily Current Affairs & Quiz Pipeline
+
+on:
+  schedule:
+    # Runs every day at 00:30 UTC (which is 6:00 AM IST)
+    - cron: '30 0 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI anytime
+
+jobs:
+  run-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Pipeline
+        env:
+          GEMINI_CURATION_KEY: ${{ secrets.GEMINI_CURATION_KEY }}
+          GEMINI_QUIZ_KEY: ${{ secrets.GEMINI_QUIZ_KEY }}
+          GEMINI_UPDATER_KEY: ${{ secrets.GEMINI_UPDATER_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.PAT_GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ secrets.GITHUB_OWNER }}
+          GITHUB_REPO: ${{ secrets.GITHUB_REPO }}
+          GITHUB_BRANCH: "main"
+        run: node -e "require('./src/cron/dailyJob').runPipelineNow()"
+
+      - name: Commit & Push Updated Data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update: Daily news and quizzes" && git push)
