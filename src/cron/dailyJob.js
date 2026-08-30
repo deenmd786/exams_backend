@@ -1,9 +1,10 @@
 const { fetchDailyArticles } = require("../services/newsService");
 const { getExamWorthyArticles } = require("../services/curationService");
 const { generateBatchQuizzes } = require("../services/quizService");
-const { checkAndUpdateDualDatasets } = require("../services/updaterService");
+const { syncDynamicDatasets } = require("../services/updaterService");
 const { readData, writeData } = require("../utils/fileHelper");
 const { sendDailyAlert } = require("../services/alertService");
+const { syncArticlesToGithub, syncQuizzesToGithub } = require("../services/githubCurrentAffairsService"); // ✅ Imported
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -25,7 +26,7 @@ async function runPipelineNow() {
             curatedArticles = rawArticles.slice(0, 5);
         }
 
-        // 3. Save to monthly JSON archive
+        // 3. Save to local monthly JSON archive
         const monthName = now.toLocaleString("default", { month: "long" }).toLowerCase();
         const year = now.getFullYear();
         const newsFileName = `news/${monthName}_${year}.json`;
@@ -50,19 +51,22 @@ async function runPipelineNow() {
         // 4. Generate batch quizzes
         const createdQuizzes = await generateBatchQuizzes(curatedArticles);
 
-        // 5. Cooldown before GitHub Sync
-        console.log("⏳ Cooling down 15s before syncing GitHub datasets...");
+        // 5. 🌐 UPLOAD TO GITHUB (Articles & Quizzes in deenmd786/current_affairs)
+        console.log("🚀 Uploading Articles & Quizzes to GitHub Repository...");
+        await syncArticlesToGithub(curatedArticles);
+        await syncQuizzesToGithub(createdQuizzes);
+        console.log("✅ Successfully synced Articles & Quizzes to GitHub!");
+
+        // 6. Cooldown before GitHub GK List Sync
+        console.log("⏳ Cooling down 15s before syncing dynamic GK datasets...");
         await sleep(15000);
 
-        // 6. Cross-reference with GitHub GK datasets
-        for (const article of curatedArticles) {
-            const combinedText = `${article.title}. ${article.description}`;
-            await checkAndUpdateDualDatasets(combinedText);
-        }
+        // 7. Cross-reference articles for GK lists (CMs, Schemes, Military, etc.)
+        await syncDynamicDatasets(curatedArticles);
 
         console.log("✅ Daily sync pipeline completed successfully!");
 
-        // 7. Dispatch Success Alert
+        // 8. Dispatch Success Alert
         await sendDailyAlert({
             success: true,
             date: today,

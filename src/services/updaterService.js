@@ -1,9 +1,8 @@
-const { updaterModel: model } = require("../config/ai"); // ✅ Uses your dedicated updater key
+const { updaterModel: model } = require("../config/ai");
 const { getFileFromGithub, updateFileOnGithub } = require("./githubService");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// ✅ Added 'strategy' to guide the AI on Append vs Update
 const PAIRED_DATASETS = [
     {
         name: "Chief Ministers and Governors",
@@ -62,61 +61,72 @@ const PAIRED_DATASETS = [
 ];
 
 /**
- * AI ROUTER: Identifies which datasets (if any) need to be updated based on the news
+ * BATCH AI ROUTER: Evaluates all 5 articles in ONE call
  */
-async function identifyRelevantDatasets(headlineText) {
+async function identifyAllRelevantUpdates(articles) {
     const datasetNames = PAIRED_DATASETS.map(d => d.name);
 
     const prompt = `
     You are an intelligent data router for Indian Competitive Exam datasets.
-    Read the following news text:
-    "${headlineText}"
+    Here are today's curated news items:
+    ${JSON.stringify(articles.map((a, i) => ({ id: i, text: `${a.title}. ${a.description}` })), null, 2)}
 
-    Which of these exact dataset categories does this news affect?
+    Available Datasets:
     ${JSON.stringify(datasetNames, null, 2)}
 
+    Task: Match any news item to its affected dataset.
     Rules:
-    - If it's a new scheme, output ["Government Schemes"].
-    - If it's a sports winner, output ["Sports Champions and Venues"].
-    - If it doesn't fit any category, output an empty array: [].
-    
-    Return ONLY a valid JSON array of strings matching the exact names above. Do not include markdown or backticks.
+    - If a news item updates or adds to a dataset, map the datasetName to the relevant news text.
+    - If no news items affect a dataset, omit it.
+
+    Return format (strictly raw JSON array of objects, no markdown):
+    [
+      {
+        "datasetName": "Exact Dataset Name",
+        "newsText": "Relevant news headline and details"
+      }
+    ]
+    If none match, return: []
     `;
 
     try {
         const result = await model.generateContent(prompt);
         let rawText = result.response.text().trim().replace(/```json/gi, "").replace(/```/g, "");
-        const matchedNames = JSON.parse(rawText);
+        const matches = JSON.parse(rawText);
 
-        // Filter our datasets array to only return the ones the AI selected
-        return PAIRED_DATASETS.filter(d => matchedNames.includes(d.name));
+        return matches.map(m => {
+            const dataset = PAIRED_DATASETS.find(d => d.name === m.datasetName);
+            return dataset ? { ...dataset, newsText: m.newsText } : null;
+        }).filter(Boolean);
     } catch (error) {
-        console.error("❌ Failed to route headline to datasets:", error.message);
+        console.error("❌ Failed to batch-route datasets:", error.message);
         return [];
     }
 }
 
 /**
- * MAIN UPDATER: Only processes the specific files triggered by the router
+ * MAIN UPDATER: Executes updates only for verified dataset matches
  */
-async function checkAndUpdateDualDatasets(headlineText) {
-    // 1. Ask the AI Router which files to check
-    const targetedDatasets = await identifyRelevantDatasets(headlineText);
+async function syncDynamicDatasets(articles) {
+    console.log("🔍 Checking dynamic dataset triggers across all articles (Batch Router)...");
+    const matchedUpdates = await identifyAllRelevantUpdates(articles);
 
-    if (targetedDatasets.length === 0) {
-        console.log(`⏩ No dynamic dataset updates triggered for: "${headlineText.slice(0, 50)}..."`);
+    if (matchedUpdates.length === 0) {
+        console.log("⏩ No dynamic dataset updates triggered today.");
         return;
     }
 
-    console.log(`🎯 Headline triggered updates for: ${targetedDatasets.map(d => d.name).join(", ")}`);
+    console.log(`🎯 Triggered updates for ${matchedUpdates.length} dataset(s): ${matchedUpdates.map(m => m.name).join(", ")}`);
 
-    // 2. Iterate ONLY over the targeted datasets
-    for (const pair of targetedDatasets) {
-        const enFile = await getFileFromGithub(pair.enPath);
-        const hiFile = await getFileFromGithub(pair.hiPath);
+    for (const item of matchedUpdates) {
+        console.log(`⏳ Cooling down 15s before updating ${item.name}...`);
+        await sleep(15000);
+
+        const enFile = await getFileFromGithub(item.enPath);
+        const hiFile = await getFileFromGithub(item.hiPath);
 
         if (!enFile || !hiFile) {
-            console.log(`⚠️ Skipping ${pair.name} - File not found on GitHub.`);
+            console.log(`⚠️ Skipping ${item.name} - File not found on GitHub.`);
             continue;
         }
 
@@ -124,27 +134,27 @@ async function checkAndUpdateDualDatasets(headlineText) {
 
         const prompt = `
         You are an automated current affairs synchronization assistant.
-        News Headline: "${headlineText}"
+        News Event: "${item.newsText}"
         
-        Current English Dataset (${pair.name}):
+        Current English Dataset (${item.name}):
         ${JSON.stringify(enFile.json)}
 
-        Current Hindi Dataset (${pair.name}):
+        Current Hindi Dataset (${item.name}):
         ${JSON.stringify(hiFile.json)}
 
         CRITICAL INSTRUCTION FOR THIS DATASET:
-        **${pair.strategy}**
+        **${item.strategy}**
 
         Instructions:
-        1. Apply the news update to both English and Hindi JSON arrays based on the strategy above.
-        2. Ensure authentic Hindi translations for names, designations, and statuses in the Hindi object.
-        3. Include a "last_updated": "${today}" flag.
-        4. If NO changes logically apply upon reading the data, respond ONLY with the exact text "NO_CHANGE".
+        1. Apply the update to both English and Hindi JSON arrays according to the strategy above.
+        2. Ensure accurate Hindi terminology for names, designations, and statuses.
+        3. Set "last_updated": "${today}".
+        4. If NO actual factual change applies, return ONLY the text "NO_CHANGE".
 
-        Return format (strictly raw JSON, no markdown formatting):
+        Return format (strictly raw JSON, no markdown):
         {
-          "en": { ...full updated English JSON... },
-          "hi": { ...full updated Hindi JSON... }
+          "en": { ...updated English JSON... },
+          "hi": { ...updated Hindi JSON... }
         }
         `;
 
@@ -157,21 +167,17 @@ async function checkAndUpdateDualDatasets(headlineText) {
                 const parsed = JSON.parse(rawText);
 
                 if (parsed.en && parsed.hi) {
-                    await updateFileOnGithub(pair.enPath, parsed.en, enFile.sha, `Auto-update (EN): ${pair.name} - ${today}`);
-                    await updateFileOnGithub(pair.hiPath, parsed.hi, hiFile.sha, `Auto-update (HI): ${pair.name} - ${today}`);
-                    console.log(`✅ Successfully synced ${pair.name} to GitHub.`);
+                    await updateFileOnGithub(item.enPath, parsed.en, enFile.sha, `Auto-update (EN): ${item.name} - ${today}`);
+                    await updateFileOnGithub(item.hiPath, parsed.hi, hiFile.sha, `Auto-update (HI): ${item.name} - ${today}`);
+                    console.log(`✅ Successfully synced ${item.name} to GitHub.`);
                 }
             } else {
-                console.log(`[-] AI verified no changes needed for: ${pair.name}`);
+                console.log(`[-] Verified no modification needed for: ${item.name}`);
             }
         } catch (error) {
-            console.error(`❌ Error updating pair ${pair.name}:`, error.message);
+            console.error(`❌ Error updating ${item.name}:`, error.message);
         }
-
-        // ⏳ Cooldown between updates to protect GitHub & Gemini Quotas
-        console.log(`⏳ Cooling down for 15 seconds after checking ${pair.name}...`);
-        await sleep(15000);
     }
 }
 
-module.exports = { checkAndUpdateDualDatasets };
+module.exports = { syncDynamicDatasets };
