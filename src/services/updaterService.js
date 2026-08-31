@@ -1,5 +1,5 @@
 const { updaterModel: model } = require("../config/ai");
-const { getFileFromGithub, updateFileOnGithub } = require("./githubService");
+const { getFileFromGithub, updateFileOnGithub, CURRENT_AFFAIRS_REPO } = require("./githubService");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -122,8 +122,8 @@ async function syncDynamicDatasets(articles) {
         console.log(`⏳ Cooling down 15s before updating ${item.name}...`);
         await sleep(15000);
 
-        const enFile = await getFileFromGithub(item.enPath);
-        const hiFile = await getFileFromGithub(item.hiPath);
+        const enFile = await getFileFromGithub(item.enPath, CURRENT_AFFAIRS_REPO);
+        const hiFile = await getFileFromGithub(item.hiPath, CURRENT_AFFAIRS_REPO);
 
         if (!enFile || !hiFile) {
             console.log(`⚠️ Skipping ${item.name} - File not found on GitHub.`);
@@ -131,6 +131,7 @@ async function syncDynamicDatasets(articles) {
         }
 
         const today = new Date().toISOString().split("T")[0];
+
 
         const prompt = `
         You are an automated current affairs synchronization assistant.
@@ -167,8 +168,23 @@ async function syncDynamicDatasets(articles) {
                 const parsed = JSON.parse(rawText);
 
                 if (parsed.en && parsed.hi) {
-                    await updateFileOnGithub(item.enPath, parsed.en, enFile.sha, `Auto-update (EN): ${item.name} - ${today}`);
-                    await updateFileOnGithub(item.hiPath, parsed.hi, hiFile.sha, `Auto-update (HI): ${item.name} - ${today}`);
+                    // 2. Commit updates to the current_affairs repo
+                    await updateFileOnGithub(
+                        item.enPath,
+                        parsed.en,
+                        enFile.sha,
+                        `Auto-update (EN): ${item.name} - ${today}`,
+                        CURRENT_AFFAIRS_REPO
+                    );
+
+                    await updateFileOnGithub(
+                        item.hiPath,
+                        parsed.hi,
+                        hiFile.sha,
+                        `Auto-update (HI): ${item.name} - ${today}`,
+                        CURRENT_AFFAIRS_REPO
+                    );
+
                     console.log(`✅ Successfully synced ${item.name} to GitHub.`);
                 }
             } else {

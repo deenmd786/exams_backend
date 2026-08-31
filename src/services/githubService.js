@@ -15,19 +15,31 @@ const githubApi = axios.create({
 });
 
 /**
- * Fetches file content and SHA from GitHub (returns null if file does not exist yet)
+ * Fetches file content and SHA from GitHub with safe JSON parsing
  */
 async function getFileFromGithub(filePath, repo = DEFAULT_REPO) {
     try {
         const response = await githubApi.get(`/repos/${repo}/contents/${filePath}`);
-        const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+        let content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+
+        // Strip hidden BOM characters, zero-width spaces, and trim whitespace
+        content = content.replace(/^[\uFEFF\u200B\xA0]+/, '').trim();
+
+        let parsedJson = [];
+        try {
+            parsedJson = JSON.parse(content);
+        } catch (parseError) {
+            console.warn(`⚠️ Warning: Existing remote file ${filePath} contains invalid JSON. It will be safely overwritten.`);
+            parsedJson = []; // Fallback to empty array so the script doesn't crash
+        }
+
         return {
             sha: response.data.sha,
-            json: JSON.parse(content)
+            json: parsedJson
         };
     } catch (error) {
         if (error.response && error.response.status === 404) {
-            return null; // File does not exist yet (e.g. start of a new month)
+            return null; // File does not exist yet, which is perfectly fine
         }
         console.error(`❌ Error reading ${filePath} from ${repo}:`, error.message);
         throw error;

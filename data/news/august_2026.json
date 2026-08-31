@@ -1,13 +1,19 @@
 [
     {
-        "date": "2026-08-30",
+        "date": "2026-08-31",
         "total_articles": 5,
         "articles": [
             {
-                "title": "PM Modi’s SCO visit is loaded with expectations on BRICS Summit and UNSC election",
-                "description": "PM’s visit will focus on strengthening ties with Iran, Tajikistan, and other Central Asian countries; the agenda will include engagements aimed at the upcoming BRICS Summit in September, the two-year UN Security Council term of 2028-2029, and planning for the long-pending India-Central Asia Summit, ",
+                "title": "PM Modi meets Iran President Masoud Pezeshkian on the sidelines of SCO summit in Kyrgyzstan",
+                "description": "Prime Minister Modi underlined the need for continued efforts to ensure peace and stability in the region, and for safeguarding freedom of navigation and commerce",
                 "source": "The Hindu (National)",
-                "link": "https://www.thehindu.com/news/national/pms-sco-visit-is-loaded-with-expectations-on-brics-summit-and-unsc-election/article71404574.ece"
+                "link": "https://www.thehindu.com/news/national/pm-modi-meet-iran-president-masoud-pezeshkian-on-the-sidelines-of-sco-summit-in-kyrgyzstan/article71410215.ece"
+            },
+            {
+                "title": "Nirmala Sitharaman in U.S. Asheville city for G-20 finance ministerial meet",
+                "description": "U.S. Treasury Secretary Scott Bessent is hosting the G-20 Finance Ministers and central bank governors meeting in Asheville",
+                "source": "The Hindu (Economy & Business)",
+                "link": "https://www.thehindu.com/news/national/nirmala-sitharaman-g-20-finance-ministerial-meet-us-asheville/article71409601.ece"
             },
             {
                 "title": "UPI completes 10 years of digital payments, sees 13,000-fold surge in transaction volume, 4,000-fold rise in value",
@@ -16,22 +22,16 @@
                 "link": "https://www.thehindu.com/business/Economy/upi-completes-10-years-clocks-nearly-13000-fold-rise-in-transaction-volume/article71384088.ece"
             },
             {
-                "title": "India's forex reserves hit record $729 billion on sustained capital inflows - Reuters",
-                "description": "India's forex reserves hit record $729 billion on sustained capital inflows Reuters RBI push: Forex reserves at all-time high of $729.3bn The Times of India India’s foreign exchange reserves rise 12.4 billion dollars to record 729.3 billion dollars News On AIR FCNR(B) deposits push forex reserves to",
+                "title": "Gross FDI hit 15-year high of $30.7 billion in April-June 2026",
+                "description": "A longer-term analysis also shows that inflows are starting to outpace outflows on a more regular basis. For instance, while net FDI was negative in six out of the last 12 months, it was negative in only one of the last six months.",
+                "source": "The Hindu (Economy & Business)",
+                "link": "https://www.thehindu.com/business/Economy/gross-fdi-hit-15-year-high-of-307-billion-in-april-june-2026/article71392237.ece"
+            },
+            {
+                "title": "3 Semiconductor Stocks with Strong Future Roadmaps in India - Equitymaster",
+                "description": "3 Semiconductor Stocks with Strong Future Roadmaps in India Equitymaster Govt notifies ₹1,27,500-crore Semicon 2.0; spells out eligibility norms, sops for chip ecosystem The Hindu India pushes semiconductor drive as experts warn of latecomer risks Nikkei Asia Government notifies Rs 1.27 lakh crore S",
                 "source": "Google News (India Economy & Markets)",
-                "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQLTZ6Z0pNejBNMndLdnQwalh6NkF6WjIyVGZwOFZfZFl2em53RjU1V1hMSTlCclBHUzE2aEJsZ2pJSjVNTnZvaWU5ZkpBaXVDZTBmS3czUEZSbkl2cl8tRW9tekRuMkx6dHh3anpOd0NnZTBHTHUtYzdUZlpxX3NYV29BTlZnNHIzTXlDZlFSR2lVZ193Y0lKVE9DZ2pQdS1HZnV4VWx4cjJVeXNjc1l6MzJwSXVvRFJSYVE?oc=5"
-            },
-            {
-                "title": "Aditya-L1 catches Sun's early warning signs before Solar flares - UNITED NEWS OF INDIA",
-                "description": "Aditya-L1 catches Sun's early warning signs before Solar flares UNITED NEWS OF INDIA",
-                "source": "Google News (Science & Tech)",
-                "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQdWVFbnA3U0tVaWZXYTJYOENES3Jaam1UbVgxMjRlbVAxellSVXR1ZVdhU1JjNk1IUUM1QzlkaUtGRWJKZWFib1BxdW5QTzV4RjZCUzF6T3pzQXdxNFdiSmFSZkJMZmo5cDVqeEdLYm41VnRPNm4tXzRDc2N4YVVWam1FcG9tNDhsQnNQSVpNTVhPWVdLczRTTXhlM3NMUWdIRVBqazJWamdZb1JmOGtXMHFIZUE?oc=5"
-            },
-            {
-                "title": "India has highest glacial flood death toll in Hindu Kush Himalaya, UN-led study finds - Telegraph India",
-                "description": "India has highest glacial flood death toll in Hindu Kush Himalaya, UN-led study finds Telegraph India Cryospheric Risks and Transboundary Resilience Drishti IAS Nepal floods: The glacier that collapsed was not very big. Then why was it so dangerous? The Times of India Centre speeds up work on early ",
-                "source": "Google News (India National)",
-                "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNUW9iOHh4SHhZR21pdjREbE5Wb0VRQVB4bVlxNzBJM195c0NNS2lqYmx5dk4xSlpDUmFxVW1CQWJLcnR5cE1QWkhSMmFHNkJTTk1iM2tyeUg1Z09BT3NTQlJ1clhRLXZGaEZSWXFXLVk0OUdYNkIyd3lJalF1b2RzNGRpc0h4aE16RkpPTjUzTk1pazJaRDZMalJhbWdTTmN1US1XOVRvWjIyNFl6cXVCMXpFLWtnU0dRSDZGM2JKU0hHUUdlWEx0ddIBzgFBVV95cUxQOUpIQjZHWVZlcnhGdTBjS1A1c0Nzd1FER21YODFzc3FwUTN2VVRBbU1NclE1eFpyU0o5TTRiclpkTmo0V3BsQmIzMXRwT2hVU0lhSlBpeVVUQ0cxaFNVYlg2c0JCQ0o5OGpCZFJyc3FyTGFqRTR6QWMzLVZ3R3ZEZjNiYUxOcUI5VGZtbjVYMjlJTHhOeTUtT1JCNlZYOWtGbDFfeHJjTHdOa1ZHSzBfWlFKakN5RFA5WlFFdlpSaVNxamxGVElBeWpEWjh3UQ?oc=5"
+                "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOX3JTcFd4VVhpV212V053QVdwZzMzbUhFNEQ5M1RXVklvN09JVGZpeFZwUE5Ld2phcDFwWU91S1NGT25UbGc4MGVYWXNRa1Nod1J5VDNkcnJYQ3RwaXRmalg1eFBuaTJpNndtTS1OUm9OZ3RRREpGT0w4X2ZaLUhMWlVqczQ3RXc3QWZjbWZVWVkteURJdF9WYzJCNjJVQUN3eWNUeGhuLUJreWQ1LTNZaG1uWDk0cnNSSmxjSi1XWGRZSHJmRDBCUw?oc=5"
             }
         ]
     }

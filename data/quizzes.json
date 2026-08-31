@@ -1,192 +1,97 @@
 [
     {
         "id": "ca_2026_08_001",
-        "date": "2026-08-30",
-        "question": "During the SCO visit engagements, India highlighted its candidacy for a two-year non-permanent seat on the UN Security Council for which term?",
+        "date": "2026-08-31",
+        "question": "On the sidelines of the SCO summit held in Kyrgyzstan, Prime Minister Narendra Modi met with the President of which country to discuss regional peace and freedom of navigation?",
         "options": [
-            "2026-2027",
-            "2027-2028",
-            "2028-2029",
-            "2029-2030"
+            "Iran",
+            "Uzbekistan",
+            "Tajikistan",
+            "Kazakhstan"
         ],
-        "answer": "2028-2029",
-        "explanation": "Prime Minister Modi's SCO visit included diplomatic engagements aimed at securing support for India's upcoming two-year UN Security Council term of 2028-2029.",
+        "answer": "Iran",
+        "explanation": "Prime Minister Narendra Modi met Iranian President Masoud Pezeshkian on the sidelines of the SCO summit in Kyrgyzstan to underline the need for regional peace and freedom of navigation.",
         "tags": [
             "International Relations",
-            "Current Affairs"
+            "SCO"
         ],
         "source": "The Hindu (National)",
-        "link": "https://www.thehindu.com/news/national/pms-sco-visit-is-loaded-with-expectations-on-brics-summit-and-unsc-election/article71404574.ece"
+        "link": "https://www.thehindu.com/news/national/pm-modi-meet-iran-president-masoud-pezeshkian-on-the-sidelines-of-sco-summit-in-kyrgyzstan/article71410215.ece"
     },
     {
         "id": "ca_2026_08_002",
-        "date": "2026-08-30",
-        "question": "According to the Finance Ministry, India's annual UPI transaction volume saw approximately what fold surge between 2016-17 and 2025-26?",
+        "date": "2026-08-31",
+        "question": "Who hosted the G-20 Finance Ministers and Central Bank Governors meeting in Asheville, U.S.?",
         "options": [
-            "4,000-fold",
-            "8,000-fold",
-            "10,000-fold",
-            "13,000-fold"
+            "Scott Bessent",
+            "Janet Yellen",
+            "Jerome Powell",
+            "Antony Blinken"
         ],
-        "answer": "13,000-fold",
-        "explanation": "Annual UPI transaction volume grew from 1.78 crore in 2016-17 to over 24,162 crore in 2025-26, representing an almost 13,000-fold surge.",
+        "answer": "Scott Bessent",
+        "explanation": "U.S. Treasury Secretary Scott Bessent hosted the G-20 Finance Ministers and central bank governors meeting in Asheville, U.S.",
         "tags": [
-            "Economy",
-            "Banking & Finance"
+            "International Events",
+            "G20"
         ],
         "source": "The Hindu (Economy & Business)",
-        "link": "https://www.thehindu.com/business/Economy/upi-completes-10-years-clocks-nearly-13000-fold-rise-in-transaction-volume/article71384088.ece"
+        "link": "https://www.thehindu.com/news/national/nirmala-sitharaman-g-20-finance-ministerial-meet-us-asheville/article71409601.ece"
     },
     {
         "id": "ca_2026_08_003",
-        "date": "2026-08-30",
-        "question": "Driven by sustained capital inflows, India's foreign exchange (forex) reserves recently surged to which record high figure?",
+        "date": "2026-08-31",
+        "question": "According to the Finance Ministry statement, by what factor did annual UPI transaction volume surge from 2016-17 to 2025-26?",
         "options": [
-            "$650 billion",
-            "$695 billion",
-            "$729 billion",
-            "$750 billion"
+            "Almost 13,000-fold",
+            "Almost 4,000-fold",
+            "Almost 8,000-fold",
+            "Almost 10,000-fold"
         ],
-        "answer": "$729 billion",
-        "explanation": "India's foreign exchange reserves hit an all-time record high of $729 billion (or $729.3 billion) due to sustained capital inflows and central bank measures.",
+        "answer": "Almost 13,000-fold",
+        "explanation": "Annual UPI transaction volume increased from 1.78 crore in 2016-17 to over 24,162 crore in 2025-26, registering an almost 13,000-fold rise.",
         "tags": [
             "Economy",
-            "Banking & Finance"
-        ],
-        "source": "Google News (India Economy & Markets)",
-        "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQLTZ6Z0pNejBNMndLdnQwalh6NkF6WjIyVGZwOFZfZFl2em53RjU1V1hMSTlCclBHUzE2aEJsZ2pJSjVNTnZvaWU5ZkpBaXVDZTBmS3czUEZSbkl2cl8tRW9tekRuMkx6dHh3anpOd0NnZTBHTHUtYzdUZlpxX3NYV29BTlZnNHIzTXlDZlFSR2lVZ193Y0lKVE9DZ2pQdS1HZnV4VWx4cjJVeXNjc1l6MzJwSXVvRFJSYVE?oc=5"
-    },
-    {
-        "id": "ca_2026_08_004",
-        "date": "2026-08-30",
-        "question": "According to a UN-led study on cryospheric risks, which country reported the highest death toll from glacial floods in the Hindu Kush Himalaya region?",
-        "options": [
-            "Nepal",
-            "Pakistan",
-            "India",
-            "Bhutan"
-        ],
-        "answer": "India",
-        "explanation": "A UN-led study highlighted that India registered the highest glacial flood death toll across the Hindu Kush Himalaya region.",
-        "tags": [
-            "Environment & Ecology",
-            "Current Affairs"
-        ],
-        "source": "Google News (India National)",
-        "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNUW9iOHh4SHhZR21pdjREbE5Wb0VRQVB4bVlxNzBJM195c0NNS2lqYmx5dk4xSlpDUmFxVW1CQWJLcnR5cE1QWkhSMmFHNkJTTk1iM2tyeUg1Z09BT3NTQlJ1clhRLXZGaEZSWXFXLVk0OUdYNkIyd3lJalF1b2RzNGRpc0h4aE16RkpPTjUzTk1pazJaRDZMalJhbWdTTmN1US1XOVRvWjIyNFl6cXVCMXpFLWtnU0dRSDZGM2JKU0hHUUdlWEx0ddIBzgFBVV95cUxQOUpIQjZHWVZlcnhGdTBjS1A1c0Nzd1FER21YODFzc3FwUTN2VVRBbU1NclE1eFpyU0o5TTRiclpkTmo0V3BsQmIzMXRwT2hVU0lhSlBpeVVUQ0cxaFNVYlg2c0JCQ0o5OGpCZFJyc3FyTGFqRTR6QWMzLVZ3R3ZEZjNiYUxOcUI5VGZtbjVYMjlJTHhOeTUtT1JCNlZYOWtGbDFfeHJjTHdOa1ZHSzBfWlFKakN5RFA5WlFFdlpSaVNxamxGVElBeWpEWjh3UQ?oc=5"
-    },
-    {
-        "id": "ca_2026_08_005",
-        "date": "2026-08-30",
-        "question": "Which Indian space mission successfully detected early warning signs of solar activity before the eruption of solar flares?",
-        "options": [
-            "Chandrayaan-3",
-            "Aditya-L1",
-            "AstroSat",
-            "XPoSat"
-        ],
-        "answer": "Aditya-L1",
-        "explanation": "India's solar observation mission, Aditya-L1, successfully captured early warning signs on the Sun prior to solar flares.",
-        "tags": [
-            "Science & Technology",
-            "Space"
-        ],
-        "source": "Google News (Science & Tech)",
-        "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQdWVFbnA3U0tVaWZXYTJYOENES3Jaam1UbVgxMjRlbVAxellSVXR1ZVdhU1JjNk1IUUM1QzlkaUtGRWJKZWFib1BxdW5QTzV4RjZCUzF6T3pzQXdxNFdiSmFSZkJMZmo5cDVqeEdLYm41VnRPNm4tXzRDc2N4YVVWam1FcG9tNDhsQnNQSVpNTVhPWVdLczRTTXhlM3NMUWdIRVBqazJWamdZb1JmOGtXMHFIZUE?oc=5"
-    },
-    {
-        "id": "ca_2026_08_006",
-        "date": "2026-08-30",
-        "question": "As per the agenda of PM Modi's SCO visit, India is aiming for a two-year UN Security Council non-permanent member term for which of the following periods?",
-        "options": [
-            "2026-2027",
-            "2027-2028",
-            "2028-2029",
-            "2029-2030"
-        ],
-        "answer": "2028-2029",
-        "explanation": "PM Modi's SCO visit agenda includes engagements aimed at the upcoming BRICS Summit, planning for the India-Central Asia Summit, and the two-year UN Security Council term of 2028-2029.",
-        "tags": [
-            "International Relations",
-            "Diplomacy"
-        ],
-        "source": "The Hindu (National)",
-        "link": "https://www.thehindu.com/news/national/pms-sco-visit-is-loaded-with-expectations-on-brics-summit-and-unsc-election/article71404574.ece"
-    },
-    {
-        "id": "ca_2026_08_007",
-        "date": "2026-08-30",
-        "question": "According to the Finance Ministry's statement on 10 years of UPI, what did annual transaction volume reach in the financial year 2025-26?",
-        "options": [
-            "More than 1,780 crore",
-            "More than 13,000 crore",
-            "More than 24,162 crore",
-            "More than 50,000 crore"
-        ],
-        "answer": "More than 24,162 crore",
-        "explanation": "Annual UPI transaction volume grew from 1.78 crore in 2016-17 to more than 24,162 crore in 2025-26, marking an almost 13,000-fold increase.",
-        "tags": [
-            "Banking & Economy",
             "Digital Payments"
         ],
         "source": "The Hindu (Economy & Business)",
         "link": "https://www.thehindu.com/business/Economy/upi-completes-10-years-clocks-nearly-13000-fold-rise-in-transaction-volume/article71384088.ece"
     },
     {
-        "id": "ca_2026_08_008",
-        "date": "2026-08-30",
-        "question": "According to recent reports, India's foreign exchange (forex) reserves reached an all-time high of how much?",
+        "id": "ca_2026_08_004",
+        "date": "2026-08-31",
+        "question": "According to the recent FDI data analysis, in how many of the last six months was net FDI negative?",
         "options": [
-            "$650.5 billion",
-            "$700.2 billion",
-            "$729.3 billion",
-            "$750.0 billion"
+            "Only one month",
+            "Three months",
+            "Six months",
+            "Four months"
         ],
-        "answer": "$729.3 billion",
-        "explanation": "Driven by sustained capital inflows and FCNR(B) deposits, India's foreign exchange reserves hit a record all-time high of $729.3 billion.",
+        "answer": "Only one month",
+        "explanation": "While net FDI was negative in six out of the last 12 months, the recent trend improved such that net FDI was negative in only one of the last six months.",
         "tags": [
             "Economy",
-            "Banking"
+            "FDI"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/business/Economy/gross-fdi-hit-15-year-high-of-307-billion-in-april-june-2026/article71392237.ece"
+    },
+    {
+        "id": "ca_2026_08_005",
+        "date": "2026-08-31",
+        "question": "What is the total financial outlay of the government-notified 'Semicon 2.0' scheme aimed at promoting India's chip ecosystem?",
+        "options": [
+            "₹1,27,500 crore",
+            "₹95,000 crore",
+            "₹1,50,000 crore",
+            "₹76,000 crore"
+        ],
+        "answer": "₹1,27,500 crore",
+        "explanation": "The Government of India notified the ₹1,27,500-crore (Rs 1.27 lakh crore) Semicon 2.0 scheme detailing eligibility norms and incentives for the semiconductor chip ecosystem.",
+        "tags": [
+            "Technology",
+            "Government Schemes"
         ],
         "source": "Google News (India Economy & Markets)",
-        "link": "https://news.google.com/rss/articles/CBMiugFBVV95cUxQLTZ6Z0pNejBNMndLdnQwalh6NkF6WjIyVGZwOFZfZFl2em53RjU1V1hMSTlCclBHUzE2aEJsZ2pJSjVNTnZvaWU5ZkpBaXVDZTBmS3czUEZSbkl2cl8tRW9tekRuMkx6dHh3anpOd0NnZTBHTHUtYzdUZlpxX3NYV29BTlZnNHIzTXlDZlFSR2lVZ193Y0lKVE9DZ2pQdS1HZnV4VWx4cjJVeXNjc1l6MzJwSXVvRFJSYVE?oc=5"
-    },
-    {
-        "id": "ca_2026_08_009",
-        "date": "2026-08-30",
-        "question": "Which Indian space mission recently captured early warning signs on the Sun before solar flares occurred?",
-        "options": [
-            "AstroSat",
-            "Aditya-L1",
-            "Chandrayaan-3",
-            "XPoSat"
-        ],
-        "answer": "Aditya-L1",
-        "explanation": "India's solar observation mission, Aditya-L1, successfully detected early warning signs on the Sun preceding solar flares.",
-        "tags": [
-            "Science & Technology",
-            "Space"
-        ],
-        "source": "Google News (Science & Tech)",
-        "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQdWVFbnA3U0tVaWZXYTJYOENES3Jaam1UbVgxMjRlbVAxellSVXR1ZVdhU1JjNk1IUUM1QzlkaUtGRWJKZWFib1BxdW5QTzV4RjZCUzF6T3pzQXdxNFdiSmFSZkJMZmo5cDVqeEdLYm41VnRPNm4tXzRDc2N4YVVWam1FcG9tNDhsQnNQSVpNTVhPWVdLczRTTXhlM3NMUWdIRVBqazJWamdZb1JmOGtXMHFIZUE?oc=5"
-    },
-    {
-        "id": "ca_2026_08_010",
-        "date": "2026-08-30",
-        "question": "According to a UN-led study, India has recorded the highest glacial flood death toll in which region?",
-        "options": [
-            "Western Ghats",
-            "Andes Range",
-            "Hindu Kush Himalaya",
-            "Alps Region"
-        ],
-        "answer": "Hindu Kush Himalaya",
-        "explanation": "A UN-led study found that India has suffered the highest death toll due to glacial floods in the Hindu Kush Himalaya region.",
-        "tags": [
-            "Environment",
-            "Disaster Management"
-        ],
-        "source": "Google News (India National)",
-        "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxNUW9iOHh4SHhZR21pdjREbE5Wb0VRQVB4bVlxNzBJM195c0NNS2lqYmx5dk4xSlpDUmFxVW1CQWJLcnR5cE1QWkhSMmFHNkJTTk1iM2tyeUg1Z09BT3NTQlJ1clhRLXZGaEZSWXFXLVk0OUdYNkIyd3lJalF1b2RzNGRpc0h4aE16RkpPTjUzTk1pazJaRDZMalJhbWdTTmN1US1XOVRvWjIyNFl6cXVCMXpFLWtnU0dRSDZGM2JKU0hHUUdlWEx0ddIBzgFBVV95cUxQOUpIQjZHWVZlcnhGdTBjS1A1c0Nzd1FER21YODFzc3FwUTN2VVRBbU1NclE1eFpyU0o5TTRiclpkTmo0V3BsQmIzMXRwT2hVU0lhSlBpeVVUQ0cxaFNVYlg2c0JCQ0o5OGpCZFJyc3FyTGFqRTR6QWMzLVZ3R3ZEZjNiYUxOcUI5VGZtbjVYMjlJTHhOeTUtT1JCNlZYOWtGbDFfeHJjTHdOa1ZHSzBfWlFKakN5RFA5WlFFdlpSaVNxamxGVElBeWpEWjh3UQ?oc=5"
+        "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOX3JTcFd4VVhpV212V053QVdwZzMzbUhFNEQ5M1RXVklvN09JVGZpeFZwUE5Ld2phcDFwWU91S1NGT25UbGc4MGVYWXNRa1Nod1J5VDNkcnJYQ3RwaXRmalg1eFBuaTJpNndtTS1OUm9OZ3RRREpGT0w4X2ZaLUhMWlVqczQ3RXc3QWZjbWZVWVkteURJdF9WYzJCNjJVQUN3eWNUeGhuLUJreWQ1LTNZaG1uWDk0cnNSSmxjSi1XWGRZSHJmRDBCUw?oc=5"
     }
 ]
