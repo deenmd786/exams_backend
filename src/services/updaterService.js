@@ -1,4 +1,4 @@
-const { model } = require("../config/ai");
+const { generateWithRetryAndFallback, updaterKey } = require("../config/ai");
 const { getFileFromGithub, updateFileOnGithub, CURRENT_AFFAIRS_REPO } = require("./githubService");
 
 const PAIRED_DATASETS = [
@@ -52,16 +52,17 @@ async function verifyAndUpdateSingleDataset(datasetIndex) {
     }
     `;
 
-    const result = await model.generateContent(prompt);
+    // 3. Call AI with retry and key rotation fallback
+    const result = await generateWithRetryAndFallback(prompt, updaterKey);
     let rawText = result.response.text().trim();
 
-    // 3. Fast Exit if accurate
+    // 4. Fast Exit if accurate
     if (rawText === "NO_CHANGE" || rawText.includes("NO_CHANGE")) {
         console.log(`✅ [${item.name}] English data is 100% up-to-date. Hindi check skipped.`);
         return { status: "Verified - No Changes" };
     }
 
-    // 4. If modified, parse and push updates to both EN and HI files
+    // 5. If modified, parse and push updates to both EN and HI files
     rawText = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
     const parsed = JSON.parse(rawText);
 

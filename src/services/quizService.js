@@ -1,6 +1,4 @@
-// Change line 1 to:
-const { primaryModel: model } = require('../config/ai');
-
+const { generateWithRetryAndFallback, quizKey } = require('../config/ai');
 const { readData, writeData } = require('../utils/fileHelper');
 
 async function generateBatchQuizzes(articles) {
@@ -52,7 +50,8 @@ async function generateBatchQuizzes(articles) {
     `;
 
     try {
-        const result = await model.generateContent(prompt);
+        // Updated to use the resilient retry and fallback system
+        const result = await generateWithRetryAndFallback(prompt, quizKey);
         let rawText = result.response.text().trim();
         rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
 

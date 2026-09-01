@@ -1,13 +1,13 @@
-const { curationModel } = require("../config/ai");
+const { generateWithRetryAndFallback, curationKey } = require("../config/ai");
 
 async function getExamWorthyArticles(articles, requiredCount = 5) {
     if (!articles || articles.length <= requiredCount) return articles || [];
 
-    // ✅ Include a short snippet of the description so the AI catches hidden facts (like SCO Summits or ECLGS schemes)
+    // Include a short snippet of the description so the AI catches hidden facts
     const payload = articles.map((a, i) => ({
         index: i,
         title: a.title,
-        context: a.description ? a.description.substring(0, 150) : "" // Keep it short to save tokens
+        context: a.description ? a.description.substring(0, 150) : ""
     }));
 
     const prompt = `
@@ -37,7 +37,7 @@ Do not include markdown blocks, backticks, or explanations.
 `;
 
     try {
-        const result = await curationModel.generateContent(prompt);
+        const result = await generateWithRetryAndFallback(prompt, curationKey);
         let rawText = result.response.text().trim();
         rawText = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
 
@@ -47,7 +47,7 @@ Do not include markdown blocks, backticks, or explanations.
             .map((i) => articles[i])
             .filter((a) => a !== undefined);
 
-        // Safeguard to ensure we don't accidentally return more/less than required
+        // Safeguard to ensure exactly the required count is returned
         return curated.slice(0, requiredCount);
     } catch (error) {
         console.error("⚠️ Curation fallback triggered:", error.message);
