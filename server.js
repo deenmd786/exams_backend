@@ -25,18 +25,28 @@ app.get('/api/health', (req, res) => {
     res.json({ status: "Active", timestamp: new Date() });
 });
 
+app.get('/ping', (req, res) => {
+    console.log('Ping received! Keeping server awake.');
+    res.status(200).send('Awake');
+});
+
 // 3. 5:00 AM automated cron trigger endpoint
-app.get('/api/trigger-sync', async (req, res) => {
+// Remove 'async' from the callback
+app.get('/api/trigger-sync', (req, res) => {
     const clientSecret = req.query.secret;
     const expectedSecret = process.env.CRON_SECRET || "my_sync_secret_2026";
 
     if (!clientSecret || clientSecret !== expectedSecret) {
-        return res.status(401).json({ error: "Unauthorized: Invalid or missing secret key" });
+        return res.status(401).json({ error: "Unauthorized" });
     }
 
-    res.status(202).json({ message: "Sync pipeline initiated in background." });
-    console.log("⏰ Sync trigger received. Starting pipeline...");
-    await runPipelineNow();
+    // Instantly close the connection so cron-job.org gets a tiny response
+    res.status(202).json({ message: "Sync started in background." });
+
+    // Run the pipeline completely detached (NO AWAIT)
+    runPipelineNow().catch(error => {
+        console.error("❌ Background pipeline failed:", error);
+    });
 });
 
 // 4. Local testing trigger endpoint
