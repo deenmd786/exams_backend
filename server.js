@@ -1,10 +1,10 @@
 const express = require('express');
 require('dotenv').config();
-const { 
-    runArticlesJob, 
-    runQuizzesJob, 
-    runDynamicGkJob, 
-    runPipelineNow 
+const {
+    runArticlesJob,
+    runQuizzesJob,
+    runDynamicGkJob,
+    runPipelineNow
 } = require('./src/cron/dailyJob');
 
 const app = express();
@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
         endpoints: {
             health: "/api/health",
             ping: "/ping",
+            autoTask: `/api/run-task?secret=${secret}`,
             runArticles: `/api/run-task?secret=${secret}&task=articles`,
             runQuizzes: `/api/run-task?secret=${secret}&task=quizzes`,
             runDynamicGK: `/api/run-task?secret=${secret}&task=gk&index=0`,
@@ -39,7 +40,7 @@ app.get('/ping', (req, res) => {
     res.status(200).send('Awake');
 });
 
-// Smart Dynamic Task Endpoint
+// 3. Smart Dynamic Task Endpoint
 app.get('/api/run-task', (req, res) => {
     const { secret, task, index } = req.query;
     const expectedSecret = process.env.CRON_SECRET || "my_sync_secret_2026";
@@ -48,7 +49,7 @@ app.get('/api/run-task', (req, res) => {
         return res.status(401).json({ error: "Unauthorized: Invalid secret key" });
     }
 
-    // Acknowledge immediately to avoid timeouts
+    // Acknowledge immediately to prevent caller timeouts
     res.status(202).json({ message: "Task request received. Running in background." });
 
     (async () => {
@@ -60,7 +61,6 @@ app.get('/api/run-task', (req, res) => {
 
             // 2. Automatic Time-Based Dispatcher (IST Timezone)
             const now = new Date();
-            // Convert to Indian Standard Time (IST)
             const istTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             const currentHour = istTime.getHours();
 
@@ -100,7 +100,17 @@ app.get('/api/run-task', (req, res) => {
     })();
 });
 
-// 6. Catch-all for undefined routes
+// 4. Local testing route (Runs full sync with log output)
+app.get('/api/test-sync', async (req, res) => {
+    res.json({ message: "Test sync initiated in background. Check terminal logs." });
+    try {
+        await runPipelineNow();
+    } catch (error) {
+        console.error("❌ Local test sync failed:", error.message);
+    }
+});
+
+// 5. Catch-all for undefined routes
 app.use((req, res) => {
     res.status(404).json({
         error: "Not Found",
@@ -109,6 +119,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
+    const secret = process.env.CRON_SECRET || "my_sync_secret_2026";
     console.log(`Server running on port ${PORT}`);
-    console.log(`👉 Test locally at: http://localhost:${PORT}/api/test-sync`);
+    console.log(`👉 Test Auto Task: http://localhost:${PORT}/api/run-task?secret=${secret}`);
 });

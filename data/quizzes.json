@@ -93,5 +93,100 @@
         ],
         "source": "Google News (India Economy & Markets)",
         "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOX3JTcFd4VVhpV212V053QVdwZzMzbUhFNEQ5M1RXVklvN09JVGZpeFZwUE5Ld2phcDFwWU91S1NGT25UbGc4MGVYWXNRa1Nod1J5VDNkcnJYQ3RwaXRmalg1eFBuaTJpNndtTS1OUm9OZ3RRREpGT0w4X2ZaLUhMWlVqczQ3RXc3QWZjbWZVWVkteURJdF9WYzJCNjJVQUN3eWNUeGhuLUJreWQ1LTNZaG1uWDk0cnNSSmxjSi1XWGRZSHJmRDBCUw?oc=5"
+    },
+    {
+        "id": "ca_2026_09_006",
+        "date": "2026-09-01",
+        "question": "Which country took over the Shanghai Cooperation Organisation (SCO) chairmanship for the 2026–2027 term?",
+        "options": [
+            "India",
+            "Pakistan",
+            "Afghanistan",
+            "Uzbekistan"
+        ],
+        "answer": "Pakistan",
+        "explanation": "According to the news item, Pakistan assumed the chair of the Shanghai Cooperation Organisation (SCO) for the 2026–2027 period.",
+        "tags": [
+            "International Relations",
+            "SCO"
+        ],
+        "source": "The Hindu (National)",
+        "link": "https://www.thehindu.com/news/national/prime-minister-narendra-modi-address-annual-sco-summit-september-1-2026/article71414028.ece"
+    },
+    {
+        "id": "ca_2026_09_007",
+        "date": "2026-09-01",
+        "question": "According to the GST revenue data for August 2026, by what percentage did revenue from imports increase?",
+        "options": [
+            "14.8%",
+            "29%",
+            "7.8%",
+            "12.5%"
+        ],
+        "answer": "29%",
+        "explanation": "The report highlights that while total GST revenue grew by 14.8% to nearly ₹2 lakh crore in August 2026, revenue from imports increased by 29%.",
+        "tags": [
+            "Economy",
+            "GST"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/business/Economy/gross-gst-mop-up-grows-15-to-2-lakh-crore-in-august/article71414164.ece"
+    },
+    {
+        "id": "ca_2026_09_008",
+        "date": "2026-09-01",
+        "question": "What was India's Gross Domestic Product (GDP) growth rate recorded in Q1?",
+        "options": [
+            "6.8%",
+            "7.2%",
+            "7.8%",
+            "8.4%"
+        ],
+        "answer": "7.8%",
+        "explanation": "India recorded a GDP growth rate of 7.8% in Q1, driven by manufacturing alongside utility and service categories.",
+        "tags": [
+            "Economy",
+            "GDP"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/business/Economy/gdp-growth-comes-in-at-78-in-q1-slower-than-last-quarter-but-quicker-than-last-year/article71410830.ece"
+    },
+    {
+        "id": "ca_2026_09_009",
+        "date": "2026-09-01",
+        "question": "Which constitutional body is mentioned as risking a move away from its core mandate as an equalising force within the federation?",
+        "options": [
+            "14th Finance Commission",
+            "15th Finance Commission",
+            "16th Finance Commission",
+            "Law Commission of India"
+        ],
+        "answer": "16th Finance Commission",
+        "explanation": "The analysis notes that the Sixteenth Finance Commission risks straying from its primary mandate of serving as an equalising force in fiscal federalism.",
+        "tags": [
+            "Polity",
+            "Fiscal Federalism"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/opinion/lead/fiscal-federalism-efficiency-versus-equity-concerns/article71310469.ece"
+    },
+    {
+        "id": "ca_2026_09_010",
+        "date": "2026-09-01",
+        "question": "On what specific ground did India reject the Permanent Court of Arbitration's order regarding the Indus Waters Treaty?",
+        "options": [
+            "Lack of jurisdiction",
+            "Financial bias",
+            "Lack of evidence",
+            "Procedural delay"
+        ],
+        "answer": "Lack of jurisdiction",
+        "explanation": "India rejected the Permanent Court of Arbitration's order on the Indus Waters Treaty by calling the arbitration award 'illegal' and stating that the court had 'no jurisdiction'.",
+        "tags": [
+            "International Law",
+            "Indus Waters Treaty"
+        ],
+        "source": "Google News (India National)",
+        "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPMmRpRDhuWnZ5NkRaYmNBcVdfcm1JRWxGeTZkYnVKMFJaX2hWd1Nja0YzOHpFcmNFNVdhRzF0VzdEYlFHT2FnTHpzWHo2emtzaXpuSTRLaWpyMnV2R1B6Y1NjR29NalE3LXBUUEs5LWNZNmlETGl1cWVBVjVZcENCcE14aGVCdVVoQXhuZElEZm43enM5WHgyMndhbkFieXVNS2Z1QXpHVDFsZ2dHaU81a9IBtgFBVV95cUxPaVlXRVFSa3VUVDRZMlVEWlU3bzdaekhsbllFbGsyVm1MSWpId1FZR1VXNGpjR0c5X01zcDJmTzNYa0xNcVJIZFE4bDJfbzFRTlcteDlBZ2NuMmNfRzlSaEQwSzB0SElaWW1ScmNIQklkcDdmS1ZEZUdpZ0F0aldadTBlQWU5dXd4enVwSVZweVlCQWlfTVA0d1R6MzYybjFvcnBidGQwZ0FER0tLcE02VlhILU5Tdw?oc=5"
     }
 ]

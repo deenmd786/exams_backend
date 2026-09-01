@@ -1,14 +1,14 @@
 const { getFileFromGithub, updateFileOnGithub, CURRENT_AFFAIRS_REPO } = require('./githubService');
 
 /**
- * Helper to generate paths like:
- * 2026/Article/English/08_August_2026.json
- * 2026/Quiz/English/08_August_2026.json
+ * Generates folder paths dynamically for English and Hindi:
+ * e.g., 2026/Article/English/09_September_2026.json
+ *       2026/Article/Hindi/09_September_2026.json
  */
-function getMonthlyPaths(dateObj = new Date()) {
+function getMonthlyPaths(lang = 'English', dateObj = new Date()) {
     const year = dateObj.getFullYear();
-    const monthNumber = String(dateObj.getMonth() + 1).padStart(2, '0'); // e.g., "08", "09"
-    const monthName = dateObj.toLocaleString('en-US', { month: 'long' }); // e.g., "August", "September"
+    const monthNumber = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const monthName = dateObj.toLocaleString('en-US', { month: 'long' });
 
     const fileName = `${monthNumber}_${monthName}_${year}.json`;
 
@@ -16,17 +16,17 @@ function getMonthlyPaths(dateObj = new Date()) {
         year,
         monthName,
         todayStr: dateObj.toISOString().split('T')[0],
-        articlePath: `${year}/Article/English/${fileName}`,
-        quizPath: `${year}/Quiz/English/${fileName}`
+        articlePath: `${year}/Article/${lang}/${fileName}`,
+        quizPath: `${year}/Quiz/${lang}/${fileName}`
     };
 }
 
 /**
  * Syncs today's curated articles to the monthly article file on GitHub
  */
-async function syncArticlesToGithub(curatedArticles) {
-    const { articlePath, todayStr, monthName, year } = getMonthlyPaths();
-    console.log(`📤 Syncing articles to GitHub: ${articlePath}`);
+async function syncArticlesToGithub(articles, lang = 'English') {
+    const { articlePath, todayStr, monthName, year } = getMonthlyPaths(lang);
+    console.log(`📤 Syncing ${lang} articles to GitHub: ${articlePath}`);
 
     const existingFile = await getFileFromGithub(articlePath, CURRENT_AFFAIRS_REPO);
     let monthlyArticles = existingFile ? existingFile.json : [];
@@ -37,8 +37,8 @@ async function syncArticlesToGithub(curatedArticles) {
 
     const todayEntry = {
         date: todayStr,
-        total_articles: curatedArticles.length,
-        articles: curatedArticles
+        total_articles: articles.length,
+        articles: articles
     };
 
     // Replace if today already exists, or append if new day
@@ -50,7 +50,7 @@ async function syncArticlesToGithub(curatedArticles) {
     }
 
     const sha = existingFile ? existingFile.sha : null;
-    const commitMsg = `Update Daily Articles: ${todayStr} (${monthName} ${year})`;
+    const commitMsg = `Update Daily Articles (${lang}): ${todayStr} (${monthName} ${year})`;
 
     await updateFileOnGithub(articlePath, monthlyArticles, sha, commitMsg, CURRENT_AFFAIRS_REPO);
 }
@@ -58,9 +58,9 @@ async function syncArticlesToGithub(curatedArticles) {
 /**
  * Syncs today's generated quizzes to the monthly quiz file on GitHub
  */
-async function syncQuizzesToGithub(newQuizzes) {
-    const { quizPath, todayStr, monthName, year } = getMonthlyPaths();
-    console.log(`📤 Syncing quizzes to GitHub: ${quizPath}`);
+async function syncQuizzesToGithub(quizzes, lang = 'English') {
+    const { quizPath, todayStr, monthName, year } = getMonthlyPaths(lang);
+    console.log(`📤 Syncing ${lang} quizzes to GitHub: ${quizPath}`);
 
     const existingFile = await getFileFromGithub(quizPath, CURRENT_AFFAIRS_REPO);
     let monthlyQuizzes = existingFile ? existingFile.json : [];
@@ -70,14 +70,14 @@ async function syncQuizzesToGithub(newQuizzes) {
     }
 
     // Filter out duplicate IDs/questions if re-run on the same day
-    const newQuizIds = new Set(newQuizzes.map(q => q.id));
+    const newQuizIds = new Set(quizzes.map(q => q.id));
     monthlyQuizzes = monthlyQuizzes.filter(q => !newQuizIds.has(q.id));
 
     // Append new quizzes
-    monthlyQuizzes.push(...newQuizzes);
+    monthlyQuizzes.push(...quizzes);
 
     const sha = existingFile ? existingFile.sha : null;
-    const commitMsg = `Update Daily Quizzes: ${todayStr} (${monthName} ${year})`;
+    const commitMsg = `Update Daily Quizzes (${lang}): ${todayStr} (${monthName} ${year})`;
 
     await updateFileOnGithub(quizPath, monthlyQuizzes, sha, commitMsg, CURRENT_AFFAIRS_REPO);
 }

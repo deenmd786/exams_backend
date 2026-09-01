@@ -21,7 +21,6 @@ async function verifyAndUpdateSingleDataset(datasetIndex) {
     const item = PAIRED_DATASETS[datasetIndex];
     console.log(`🔍 [${item.name}] Checking English dataset for factual updates...`);
 
-    // 1. Fetch only the English file first
     const enFile = await getFileFromGithub(item.enPath, CURRENT_AFFAIRS_REPO);
     if (!enFile || !enFile.json) {
         throw new Error(`English file not found on GitHub: ${item.enPath}`);
@@ -29,48 +28,45 @@ async function verifyAndUpdateSingleDataset(datasetIndex) {
 
     const today = new Date().toISOString().split("T")[0];
 
-    // 2. Prompt Gemini to review English facts and provide both EN and HI if modified
     const prompt = `
-    You are an expert fact-checker and translator for Indian Competitive Exams datasets.
-    
-    Target Dataset: "${item.name}"
-    Current English Dataset Content:
-    ${JSON.stringify(enFile.json, null, 2)}
+You are an expert fact-checker and translator for Indian Competitive Exams datasets.
 
-    Task:
-    1. Check every record in this dataset against real-world current facts.
-    2. If there are NO factual updates needed, return strictly "NO_CHANGE".
-    3. If any entry has changed (new appointments, changed rates, winners, rankings):
-       - Correct the English array.
-       - Provide the exact parallel Hindi translation array (Devanagari script) with matching keys and structure.
-       - Update or append "last_updated": "${today}".
+Target Dataset: "${item.name}"
+Current English Dataset Content:
+${JSON.stringify(enFile.json, null, 2)}
 
-    Return Format (strictly raw JSON, no markdown blocks):
-    {
-      "en": [ ...updated English array... ],
-      "hi": [ ...corresponding translated Hindi array... ]
-    }
-    `;
+Task:
+1. Check every record in this dataset against real-world current facts.
+2. If there are NO factual updates needed, return strictly "NO_CHANGE".
+3. If any entry has changed (new appointments, changed rates, winners, rankings):
+   - Correct the English array.
+   - Provide the exact parallel Hindi translation array (Devanagari script) with matching keys and structure.
+   - Update or append "last_updated": "${today}".
 
-    // 3. Call AI with retry and key rotation fallback
+Return Format (strictly raw JSON, no markdown blocks):
+{
+  "en": [ ...updated English array... ],
+  "hi": [ ...corresponding translated Hindi array... ]
+}
+`;
+
     const result = await generateWithRetryAndFallback(prompt, updaterKey);
     let rawText = result.response.text().trim();
 
-    // 4. Fast Exit if accurate
     if (rawText === "NO_CHANGE" || rawText.includes("NO_CHANGE")) {
         console.log(`✅ [${item.name}] English data is 100% up-to-date. Hindi check skipped.`);
         return { status: "Verified - No Changes" };
     }
 
-    // 5. If modified, parse and push updates to both EN and HI files
     rawText = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
-    const parsed = JSON.parse(rawText);
+    const match = rawText.match(/\{[\s\S]*\}/);
+    const jsonStr = match ? match[0] : rawText;
+    const parsed = JSON.parse(jsonStr);
 
     if (!parsed.en || !parsed.hi) {
         throw new Error(`Invalid response structure returned by AI for ${item.name}`);
     }
 
-    // Fetch the existing Hindi file SHA for commit
     const hiFile = await getFileFromGithub(item.hiPath, CURRENT_AFFAIRS_REPO);
 
     // Commit English update
