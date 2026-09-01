@@ -1,0 +1,17 @@
+name: 2-Hour Auto Sync Trigger
+
+on:
+  schedule:
+    # Runs at :30 on 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23 IST (converted to UTC: 22, 0, 2, 4, 6, 8, 10, 12, 14, 16, 18)
+    - cron: '30 22,0,2,4,6,8,10,12,14,16,18 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Exams Backend Auto-Task
+        run: |
+          echo "Pinging backend runner..."
+          curl -s -X GET "https://exams-backend-33o1.onrender.com/api/run-task?secret=${{ secrets.CRON_SECRET }}" \
+            --max-time 15 || true

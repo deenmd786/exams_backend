@@ -1,93 +1,61 @@
 const { fetchDailyArticles } = require("../services/newsService");
 const { getExamWorthyArticles } = require("../services/curationService");
 const { generateBatchQuizzes } = require("../services/quizService");
-const { syncDynamicDatasets } = require("../services/updaterService");
-const { readData, writeData } = require("../utils/fileHelper");
+const { verifyAndUpdateSingleDataset } = require("../services/updaterService");
 const { sendDailyAlert } = require("../services/alertService");
-const { syncArticlesToGithub, syncQuizzesToGithub } = require("../services/githubCurrentAffairsService"); // ✅ Imported
+const { syncArticlesToGithub, syncQuizzesToGithub } = require("../services/githubCurrentAffairsService");
+const { translateArticlesToHindi, translateQuizzesToHindi } = require("../services/translationService");
+const { getFileFromGithub, CURRENT_AFFAIRS_REPO } = require("../services/githubService");
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const getTodayString = () => new Date().toISOString().split("T")[0];
 
-async function runPipelineNow() {
-    console.log("🚀 Starting Daily Current Affairs Pipeline...");
-    const now = new Date();
-    const today = now.toISOString().split("T")[0];
+// TASK 1: Run at 3:30 AM
+async function runArticlesJob() {
+    console.log("🚀 Starting 3:30 AM Task: Generate Articles...");
+    const rawArticles = await fetchDailyArticles(100);
+    let curatedArticles = await getExamWorthyArticles(rawArticles, 5);
 
-    try {
-        // 1. Fetch raw candidate articles
-        const rawArticles = await fetchDailyArticles(100);
-        if (!rawArticles || rawArticles.length === 0) {
-            throw new Error("No raw articles fetched from RSS feeds.");
-        }
+    const hindiArticles = await translateArticlesToHindi(curatedArticles);
 
-        // 2. Curation Filter (Top 5)
-        let curatedArticles = await getExamWorthyArticles(rawArticles, 5);
-        if (!curatedArticles || curatedArticles.length === 0) {
-            curatedArticles = rawArticles.slice(0, 5);
-        }
+    await syncArticlesToGithub(curatedArticles, 'English');
+    await syncArticlesToGithub(hindiArticles, 'Hindi');
 
-        // 3. Save to local monthly JSON archive
-        const monthName = now.toLocaleString("default", { month: "long" }).toLowerCase();
-        const year = now.getFullYear();
-        const newsFileName = `news/${monthName}_${year}.json`;
-
-        let monthlyNews = await readData(newsFileName);
-        if (!Array.isArray(monthlyNews)) monthlyNews = [];
-
-        const existingDayIndex = monthlyNews.findIndex((entry) => entry.date === today);
-        const dailyEntry = {
-            date: today,
-            total_articles: curatedArticles.length,
-            articles: curatedArticles
-        };
-
-        if (existingDayIndex >= 0) {
-            monthlyNews[existingDayIndex] = dailyEntry;
-        } else {
-            monthlyNews.push(dailyEntry);
-        }
-        await writeData(newsFileName, monthlyNews);
-
-        // 4. Generate batch quizzes
-        const createdQuizzes = await generateBatchQuizzes(curatedArticles);
-
-        // 5. 🌐 UPLOAD TO GITHUB (Articles & Quizzes in deenmd786/current_affairs)
-        console.log("🚀 Uploading Articles & Quizzes to GitHub Repository...");
-        await syncArticlesToGithub(curatedArticles);
-        await syncQuizzesToGithub(createdQuizzes);
-        console.log("✅ Successfully synced Articles & Quizzes to GitHub!");
-
-        // 6. Cooldown before GitHub GK List Sync
-        console.log("⏳ Cooling down 15s before syncing dynamic GK datasets...");
-        await sleep(15000);
-
-        // 7. Cross-reference articles for GK lists (CMs, Schemes, Military, etc.)
-        await syncDynamicDatasets(curatedArticles);
-
-        console.log("✅ Daily sync pipeline completed successfully!");
-
-        // 8. Dispatch Success Alert
-        await sendDailyAlert({
-            success: true,
-            date: today,
-            articlesCount: curatedArticles.length,
-            quizzesCount: createdQuizzes.length
-        });
-
-        return { success: true, count: curatedArticles.length };
-
-    } catch (error) {
-        console.error("❌ Pipeline failed:", error.message);
-
-        // Dispatch Failure Alert
-        await sendDailyAlert({
-            success: false,
-            date: today,
-            error: error.message
-        });
-
-        return { success: false, error: error.message };
-    }
+    await sendDailyAlert({ success: true, date: getTodayString(), message: "3:30 AM Articles Generated & Synced" });
 }
 
-module.exports = { runPipelineNow };
+// TASK 2: Run at 5:30 AM
+async function runQuizzesJob() {
+    console.log("🚀 Starting 5:30 AM Task: Generate Quizzes...");
+
+    // 1. Fetch today's articles directly from GitHub (Because server slept since 3:30 AM)
+    const now = new Date();
+    const year = now.getFullYear();
+    const monthNum = String(now.getMonth() + 1).padStart(2, '0');
+    const monthName = now.toLocaleString("default", { month: "long" });
+    const articlePath = `${year}/Article/English/${monthNum}_${monthName}_${year}.json`;
+
+    const ghFile = await getFileFromGithub(articlePath, CURRENT_AFFAIRS_REPO);
+    if (!ghFile || !ghFile.json) throw new Error("Could not find today's articles on GitHub to generate quizzes.");
+
+    const todayStr = getTodayString();
+    const todayData = ghFile.json.find(item => item.date === todayStr);
+    if (!todayData || !todayData.articles) throw new Error("No articles found for today's date on GitHub.");
+
+    // 2. Generate and translate
+    const createdQuizzes = await generateBatchQuizzes(todayData.articles);
+    const hindiQuizzes = await translateQuizzesToHindi(createdQuizzes);
+
+    await syncQuizzesToGithub(createdQuizzes, 'English');
+    await syncQuizzesToGithub(hindiQuizzes, 'Hindi');
+
+    await sendDailyAlert({ success: true, date: todayStr, message: "5:30 AM Quizzes Generated & Synced" });
+}
+
+// TASK 3: Run every 2 hours from 7:30 AM to 11:30 PM
+async function runDynamicGkJob(fileIndex) {
+    console.log(`🚀 Starting GK Fact-Check Task for File Index: ${fileIndex}...`);
+    const result = await verifyAndUpdateSingleDataset(Number(fileIndex));
+    console.log("✅ Task Complete:", result);
+}
+
+module.exports = { runArticlesJob, runQuizzesJob, runDynamicGkJob };
