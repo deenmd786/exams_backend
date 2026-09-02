@@ -188,5 +188,100 @@
         ],
         "source": "Google News (India National)",
         "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPMmRpRDhuWnZ5NkRaYmNBcVdfcm1JRWxGeTZkYnVKMFJaX2hWd1Nja0YzOHpFcmNFNVdhRzF0VzdEYlFHT2FnTHpzWHo2emtzaXpuSTRLaWpyMnV2R1B6Y1NjR29NalE3LXBUUEs5LWNZNmlETGl1cWVBVjVZcENCcE14aGVCdVVoQXhuZElEZm43enM5WHgyMndhbkFieXVNS2Z1QXpHVDFsZ2dHaU81a9IBtgFBVV95cUxPaVlXRVFSa3VUVDRZMlVEWlU3bzdaekhsbllFbGsyVm1MSWpId1FZR1VXNGpjR0c5X01zcDJmTzNYa0xNcVJIZFE4bDJfbzFRTlcteDlBZ2NuMmNfRzlSaEQwSzB0SElaWW1ScmNIQklkcDdmS1ZEZUdpZ0F0aldadTBlQWU5dXd4enVwSVZweVlCQWlfTVA0d1R6MzYybjFvcnBidGQwZ0FER0tLcE02VlhILU5Tdw?oc=5"
+    },
+    {
+        "id": "ca_2026_09_011",
+        "date": "2026-09-02",
+        "question": "What was India’s GDP growth rate recorded in Q1, according to recent economic data?",
+        "options": [
+            "7.8%",
+            "6.5%",
+            "8.2%",
+            "7.1%"
+        ],
+        "answer": "7.8%",
+        "explanation": "India's GDP grew at 7.8% in Q1, driven primarily by strong performance in the manufacturing and service sectors.",
+        "tags": [
+            "Economy",
+            "GDP"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/business/Economy/gdp-growth-comes-in-at-78-in-q1-slower-than-last-quarter-but-quicker-than-last-year/article71410830.ece"
+    },
+    {
+        "id": "ca_2026_09_012",
+        "date": "2026-09-02",
+        "question": "In which U.S. city is the G-20 Finance Ministers and Central Bank Governors meeting being hosted by U.S. Treasury Secretary Scott Bessent?",
+        "options": [
+            "Asheville",
+            "New York",
+            "Washington D.C.",
+            "Chicago"
+        ],
+        "answer": "Asheville",
+        "explanation": "The G-20 Finance Ministers and Central Bank Governors meeting is taking place in Asheville, hosted by U.S. Treasury Secretary Scott Bessent.",
+        "tags": [
+            "International Relations",
+            "G20"
+        ],
+        "source": "The Hindu (Economy & Business)",
+        "link": "https://www.thehindu.com/news/national/nirmala-sitharaman-g-20-finance-ministerial-meet-us-asheville/article71409601.ece"
+    },
+    {
+        "id": "ca_2026_09_013",
+        "date": "2026-09-02",
+        "question": "Who has become the first non-medical woman officer in the Indian defence forces to attain the rank of Air Vice Marshal?",
+        "options": [
+            "Shakti Sharma",
+            "Padmavathy Bandopadhyay",
+            "Shaliza Dhami",
+            "Avani Chaturvedi"
+        ],
+        "answer": "Shakti Sharma",
+        "explanation": "Shakti Sharma made history by becoming the first non-medical woman officer in the Indian defence forces to achieve the rank of Air Vice Marshal.",
+        "tags": [
+            "Defence",
+            "Persons in News"
+        ],
+        "source": "Google News (India National)",
+        "link": "https://news.google.com/rss/articles/CBMilwJBVV95cUxQOVRHcEdLM1BBU2lKbjZkd3dPd2RHTVZLTmZpYmJSZWxzdDRTOWVpYkJscFViV3lsc29MV1JGUkxZWmZjLTNudy1DWF9KT05QVzBybFY1M2JpdnNFZWlCVmxrbklDdXRJSVU1RGhMZVZpRGFtQU5uSmtNUWNkM3BOdXN3WXFSV0xfLVRNNzdINng2bVlPRnVsTTQxeDQxYUlDNEdWX1VkamZKUXJlNVpBYmdkbGhJbHFtZy1Ba19LdjVfUEFWVjdqUXo4d0FxUzBJSDZyNzRCSzRkRFUyZVEwbDdCc1R6MlVjb2F4WWJUWHNwR2Q5enlPRnR0QmRzMDlwVGFaSi1fRnk2dXJCb19UckdwdFY4Y0nSAZwCQVVfeXFMT2E5a0FDSHpFc2NnNmFScE9oQmx3QmlWVXk1NEpMdnMxYTBrWTFRRDlqUFRmSGxqd21iZlNOMEFJRDBhUm1wTURwUGpzOS1acl9RYTlSVmkyaV9lLU54NDNLdGxBSy1KdUFmdjhtMDZua25FbUN1V2ZPalVhbnVKc0Zjc3F6MUlkVzVGZXNqTUpHNlZqcnJZalA3TnFpTlFaeFAxYzBXNElqTXM3bGhHODRyQmZ5cWxlbmxCbVByMFpxZktXcWxHOEZTcDBRN2U3RlI1VDcyRmdnY29sUFNXMW43dm5sc2xFQjlfWXlzX0gyQkliMHhHMGxzaUgxOWhfYUZ0a21ncEpYNW9jUThHQ19hQXFvQlF6VWM3cVU?oc=5"
+    },
+    {
+        "id": "ca_2026_09_014",
+        "date": "2026-09-02",
+        "question": "What was India's official stance regarding the Hague Court's arbitration award on the Indus Waters Treaty?",
+        "options": [
+            "India rejected the ruling stating the court has 'no jurisdiction'",
+            "India accepted the ruling conditionally",
+            "India requested a re-evaluation by the United Nations",
+            "India welcomed the court's arbitration award"
+        ],
+        "answer": "India rejected the ruling stating the court has 'no jurisdiction'",
+        "explanation": "India rejected the Hague Court's ruling on the Indus Waters Treaty, terming the arbitration award illegal and stating that the court has no jurisdiction.",
+        "tags": [
+            "Polity",
+            "International Disputes"
+        ],
+        "source": "Google News (India National)",
+        "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPMmRpRDhuWnZ5NkRaYmNBcVdfcm1JRWxGeTZkYnVKMFJaX2hWd1Nja0YzOHpFcmNFNVdhRzF0VzdEYlFHT2FnTHpzWHo2emtzaXpuSTRLaWpyMnV2R1B6Y1NjR29NalE3LXBUUEs5LWNZNmlETGl1cWVBVjVZcENCcE14aGVCdVVoQXhuZElEZm43enM5WHgyMndhbkFieXVNS2Z1QXpHVDFsZ2dHaU81a9IBtgFBVV95cUxPaVlXRVFSa3VUVDRZMlVEWlU3bzdaekhsbllFbGsyVm1MSWpId1FZR1VXNGpjR0c5X01zcDJmTzNYa0xNcVJIZFE4bDJfbzFRTlcteDlBZ2NuMmNfRzlSaEQwSzB0SElaWW1ScmNIQklkcDdmS1ZEZUdpZ0F0aldadTBlQWU5dXd4enVwSVZweVlCQWlfTVA0d1R6MzYybjFvcnBidGQwZ0FER0tLcE02VlhILU5Tdw?oc=5"
+    },
+    {
+        "id": "ca_2026_09_015",
+        "date": "2026-09-02",
+        "question": "What does the abbreviation 'FNTA' stand for in the context of the bill introduced in the Nagaland Legislative Assembly?",
+        "options": [
+            "Frontier Nagaland Territorial Authority",
+            "Federal Nagaland Tribal Association",
+            "Frontier Nagaland Transport Agency",
+            "Federated Nagaland Territorial Administration"
+        ],
+        "answer": "Frontier Nagaland Territorial Authority",
+        "explanation": "The FNTA Bill introduced in the Nagaland Legislative Assembly aims to establish the Frontier Nagaland Territorial Authority.",
+        "tags": [
+            "Polity",
+            "State News"
+        ],
+        "source": "Google News (India National)",
+        "link": "https://news.google.com/rss/articles/CBMipgFBVV95cUxQQ2pRTUMtb0tia0ZGaFVXQXdjMXA3c19WcWNiLVdTZjFwMkYwSmdNN2NtWklHNEktNEtRWUhmMURQRDVFZG9NMjR6clN0RlZFZXZjVjVpRW9sc0EzNWVfM3ZzVldncDBjQVJTMUxzMXUyT19jN21fUlQ3NFMwVjNaQmFJeVd2YjZNd2lNQUtWaE5SVlMwd1pQenpFYVZkLURUeXByRjVR?oc=5"
     }
 ]

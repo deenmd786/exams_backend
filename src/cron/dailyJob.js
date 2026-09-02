@@ -3,59 +3,127 @@ const { getExamWorthyArticles } = require("../services/curationService");
 const { generateBatchQuizzes } = require("../services/quizService");
 const { verifyAndUpdateSingleDataset } = require("../services/updaterService");
 const { sendDailyAlert } = require("../services/alertService");
-const { syncArticlesToGithub, syncQuizzesToGithub } = require("../services/githubCurrentAffairsService");
+const {
+    syncArticlesToGithub,
+    syncQuizzesToGithub,
+    getISTDateString
+} = require("../services/githubCurrentAffairsService");
 const { translateArticlesToHindi, translateQuizzesToHindi } = require("../services/translationService");
-const { getFileFromGithub, CURRENT_AFFAIRS_REPO } = require("../services/githubService");
+const { readData, writeData } = require("../utils/fileHelper");
 
-const getTodayString = () => new Date().toISOString().split("T")[0];
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// TASK 1: Run at 3:30 AM
-async function runArticlesJob() {
-    console.log("🚀 Starting 3:30 AM Task: Generate Articles...");
-    const rawArticles = await fetchDailyArticles(100);
-    let curatedArticles = await getExamWorthyArticles(rawArticles, 5);
+// Safe IST Date string helper (YYYY-MM-DD)
+const getTodayIST = () => {
+    if (typeof getISTDateString === 'function') return getISTDateString();
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
+};
 
-    const hindiArticles = await translateArticlesToHindi(curatedArticles);
+/**
+ * 5:30 AM Morning Pipeline:
+ * Fetches fresh morning feeds, curates top 5, translates, pushes Articles (EN & HI),
+ * immediately generates quizzes from memory, translates, and pushes Quizzes (EN & HI).
+ */
+async function runMorningPipelineJob() {
+    const today = getTodayIST();
+    console.log(`🚀 Starting 5:30 AM Morning Pipeline for IST date: [${today}]...`);
 
-    await syncArticlesToGithub(curatedArticles, 'English');
-    await syncArticlesToGithub(hindiArticles, 'Hindi');
+    try {
+        // 1. Fetch fresh morning news
+        const rawArticles = await fetchDailyArticles(100);
+        if (!rawArticles || rawArticles.length === 0) {
+            throw new Error("No raw articles fetched from RSS feeds.");
+        }
 
-    await sendDailyAlert({ success: true, date: getTodayString(), message: "3:30 AM Articles Generated & Synced" });
+        // 2. Curate Top 5 exam-worthy articles
+        let curatedArticles = await getExamWorthyArticles(rawArticles, 5);
+        if (!curatedArticles || curatedArticles.length === 0) {
+            curatedArticles = rawArticles.slice(0, 5);
+        }
+
+        // 3. Local JSON archive backup
+        const istDateObj = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+        const monthName = istDateObj.toLocaleString("default", { month: "long" }).toLowerCase();
+        const year = istDateObj.getFullYear();
+        const newsFileName = `news/${monthName}_${year}.json`;
+
+        let monthlyNews = await readData(newsFileName).catch(() => []);
+        if (!Array.isArray(monthlyNews)) monthlyNews = [];
+
+        const existingDayIndex = monthlyNews.findIndex((entry) => entry.date === today);
+        const dailyEntry = {
+            date: today,
+            total_articles: curatedArticles.length,
+            articles: curatedArticles
+        };
+
+        if (existingDayIndex >= 0) {
+            monthlyNews[existingDayIndex] = dailyEntry;
+        } else {
+            monthlyNews.push(dailyEntry);
+        }
+        await writeData(newsFileName, monthlyNews);
+
+        // 4. Translate curated articles to Hindi
+        const hindiArticles = await translateArticlesToHindi(curatedArticles);
+
+        // 5. Commit English & Hindi articles to GitHub
+        await syncArticlesToGithub(curatedArticles, 'English');
+        await syncArticlesToGithub(hindiArticles, 'Hindi');
+        console.log("✅ English and Hindi Articles successfully pushed to GitHub.");
+
+        // 6. Cooldown to prevent API spikes
+        console.log("⏳ Cooling down 15s before generating quizzes...");
+        await sleep(15000);
+
+        // 7. Generate Quizzes directly from today's curated articles in memory
+        const createdQuizzes = await generateBatchQuizzes(curatedArticles);
+        if (!createdQuizzes || createdQuizzes.length === 0) {
+            throw new Error("Quiz generation returned empty list.");
+        }
+
+        // 8. Translate Quizzes to Hindi
+        const hindiQuizzes = await translateQuizzesToHindi(createdQuizzes);
+
+        // 9. Commit English & Hindi quizzes to GitHub
+        await syncQuizzesToGithub(createdQuizzes, 'English');
+        await syncQuizzesToGithub(hindiQuizzes, 'Hindi');
+        console.log("✅ English and Hindi Quizzes successfully pushed to GitHub.");
+
+        // 10. Success alert
+        await sendDailyAlert({
+            success: true,
+            date: today,
+            articlesCount: curatedArticles.length,
+            quizzesCount: createdQuizzes.length,
+            message: "5:30 AM Morning Pipeline (Articles + Quizzes EN/HI) completed successfully."
+        });
+
+        return { success: true, count: curatedArticles.length };
+
+    } catch (error) {
+        console.error("❌ Morning Pipeline failed:", error.message);
+        await sendDailyAlert({
+            success: false,
+            date: today,
+            error: error.message
+        });
+        throw error;
+    }
 }
 
-// TASK 2: Run at 5:30 AM
-async function runQuizzesJob() {
-    console.log("🚀 Starting 5:30 AM Task: Generate Quizzes...");
-
-    // 1. Fetch today's articles directly from GitHub (Because server slept since 3:30 AM)
-    const now = new Date();
-    const year = now.getFullYear();
-    const monthNum = String(now.getMonth() + 1).padStart(2, '0');
-    const monthName = now.toLocaleString("default", { month: "long" });
-    const articlePath = `${year}/Article/English/${monthNum}_${monthName}_${year}.json`;
-
-    const ghFile = await getFileFromGithub(articlePath, CURRENT_AFFAIRS_REPO);
-    if (!ghFile || !ghFile.json) throw new Error("Could not find today's articles on GitHub to generate quizzes.");
-
-    const todayStr = getTodayString();
-    const todayData = ghFile.json.find(item => item.date === todayStr);
-    if (!todayData || !todayData.articles) throw new Error("No articles found for today's date on GitHub.");
-
-    // 2. Generate and translate
-    const createdQuizzes = await generateBatchQuizzes(todayData.articles);
-    const hindiQuizzes = await translateQuizzesToHindi(createdQuizzes);
-
-    await syncQuizzesToGithub(createdQuizzes, 'English');
-    await syncQuizzesToGithub(hindiQuizzes, 'Hindi');
-
-    await sendDailyAlert({ success: true, date: todayStr, message: "5:30 AM Quizzes Generated & Synced" });
-}
-
-// TASK 3: Run every 2 hours from 7:30 AM to 11:30 PM
+/**
+ * Dynamic GK Task: Fact-checks one file index at a time
+ */
 async function runDynamicGkJob(fileIndex) {
     console.log(`🚀 Starting GK Fact-Check Task for File Index: ${fileIndex}...`);
     const result = await verifyAndUpdateSingleDataset(Number(fileIndex));
     console.log("✅ Task Complete:", result);
+    return result;
 }
 
-module.exports = { runArticlesJob, runQuizzesJob, runDynamicGkJob };
+module.exports = {
+    runMorningPipelineJob,
+    runDynamicGkJob,
+    runPipelineNow: runMorningPipelineJob // Backward compatibility alias
+};

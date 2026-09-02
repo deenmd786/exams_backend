@@ -1,27 +1,55 @@
 // test-run.js
-require('dotenv').config(); // Loads your .env variables (GitHub tokens, etc.)
-const { runArticlesJob, runQuizzesJob } = require('./src/cron/dailyJob');
+require('dotenv').config();
+const { getFileFromGithub, CURRENT_AFFAIRS_REPO } = require('./src/services/githubService');
+const { syncQuizzesToGithub, getISTDateString } = require('./src/services/githubCurrentAffairsService');
+const { translateQuizzesToHindi } = require('./src/services/translationService');
 
-async function testPipeline() {
-    console.log("🛠️ Starting Manual Test Pipeline...");
+async function syncHindiQuizzesFromEnglish() {
+    console.log("🛠️ Starting English-to-Hindi Quiz Sync...");
 
     try {
-        console.log("\n➡️ STEP 1: Running Articles Job...");
-        await runArticlesJob();
-        console.log("✅ Articles Job completed.");
+        const todayStr = typeof getISTDateString === 'function'
+            ? getISTDateString()
+            : new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
 
-        console.log("\n➡️ STEP 2: Running Quizzes Job...");
-        await runQuizzesJob();
-        console.log("✅ Quizzes Job completed.");
+        const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
+        const year = now.getFullYear();
+        const monthNum = String(now.getMonth() + 1).padStart(2, '0');
+        const monthName = now.toLocaleString("en-US", { month: 'long', timeZone: 'Asia/Kolkata' });
 
-        console.log("\n🎉 All tests finished successfully!");
-        process.exit(0); // Exit the script successfully
+        const englishQuizPath = `${year}/Quiz/English/${monthNum}_${monthName}_${year}.json`;
+        console.log(`📥 Fetching English quizzes from GitHub: ${englishQuizPath}`);
+
+        // 1. Fetch the English quiz file from GitHub
+        const enFile = await getFileFromGithub(englishQuizPath, CURRENT_AFFAIRS_REPO);
+        if (!enFile || !Array.isArray(enFile.json)) {
+            throw new Error(`Failed to load English quiz data from path: ${englishQuizPath}`);
+        }
+
+        // 2. Filter quizzes created for today
+        const todayQuizzes = enFile.json.filter(q => q.date === todayStr);
+        if (todayQuizzes.length === 0) {
+            throw new Error(`No quizzes found for date [${todayStr}] inside ${englishQuizPath}`);
+        }
+
+        console.log(`🔍 Found ${todayQuizzes.length} English quizzes for date: ${todayStr}`);
+
+        // 3. Batch-translate the quizzes to Hindi using Gemini Flash
+        console.log("🌐 Translating quizzes to Hindi...");
+        const hindiQuizzes = await translateQuizzesToHindi(todayQuizzes);
+
+        // 4. Update the Hindi quiz file on GitHub
+        console.log("📤 Uploading translated quizzes to GitHub...");
+        await syncQuizzesToGithub(hindiQuizzes, 'Hindi');
+
+        console.log(`🎉 Successfully updated Hindi quizzes on GitHub for [${todayStr}]!`);
+        process.exit(0);
 
     } catch (error) {
-        console.error("\n❌ Test Pipeline Failed:", error);
-        process.exit(1); // Exit with error
+        console.error("\n❌ Quiz Sync Failed:", error.message || error);
+        process.exit(1);
     }
 }
 
-// Execute the test
-testPipeline();
+// Execute
+syncHindiQuizzesFromEnglish();

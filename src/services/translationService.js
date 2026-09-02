@@ -1,41 +1,32 @@
 const { translate } = require('@vitalets/google-translate-api');
+const { generateWithRetryAndFallback, curationKey } = require('../config/ai');
 
-// 1. Helper function to create a delay (cool down)
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Safely translates a single string to Hindi with an enforced cooldown
+ * Safely translates short article strings with delay
  */
-async function translateText(text, delayMs = 1500) {
+async function translateText(text, delayMs = 1200) {
     if (!text || typeof text !== 'string') return text || "";
-
     try {
         const res = await translate(text, { to: 'hi' });
-        // Enforce a cool down after a successful request to prevent 429 errors
         await sleep(delayMs);
         return res.text || text;
     } catch (error) {
-        console.warn(`⚠️ Translation fallback for "${text.slice(0, 30)}...":`, error.message);
-
-        // If we hit a rate limit (429), back off for 5 seconds before returning
-        if (error.message.includes('429') || error.message.includes('TooManyRequestsError')) {
-            console.warn("⏳ Rate limit hit! Forcing a 5-second backoff...");
-            await sleep(5000);
-        }
-
+        console.warn(`⚠️ Translate fallback for "${text.slice(0, 25)}...":`, error.message);
         return text;
     }
 }
 
 /**
- * Translates an array of curated articles into Hindi
+ * Translates 5 articles (only 10 total requests, which Google Translate easily allows)
  */
 async function translateArticlesToHindi(articles) {
     console.log("🌐 Translating curated articles to Hindi...");
     const translatedArticles = [];
 
     for (const item of articles) {
-        console.log(`   - Translating article: ${item.title?.slice(0, 20)}...`);
+        console.log(`   - Translating article: ${item.title?.slice(0, 25)}...`);
         const title_hi = await translateText(item.title);
         const description_hi = await translateText(item.description);
 
@@ -50,44 +41,43 @@ async function translateArticlesToHindi(articles) {
 }
 
 /**
- * Translates an array of quizzes (questions, options, explanations) into Hindi
+ * Translates all quizzes in ONE single Gemini API call (Zero 429 Rate Limits)
  */
 async function translateQuizzesToHindi(quizzes) {
-    console.log("🌐 Translating quizzes to Hindi...");
-    const translatedQuizzes = [];
+    if (!quizzes || quizzes.length === 0) return [];
+    console.log(`🌐 Batch-translating ${quizzes.length} quizzes to Hindi via Gemini...`);
 
-    for (const q of quizzes) {
-        console.log(`   - Translating quiz ID: ${q.id}...`);
-        const question_hi = await translateText(q.question);
-        const explanation_hi = await translateText(q.explanation);
+    const prompt = `
+You are an expert Hindi translator for Indian Competitive Exam questions.
+Translate the following array of quiz objects into natural, formal Hindi (Devanagari script).
 
-        // Translate each MCQ option sequentially
-        const options_hi = [];
-        if (Array.isArray(q.options)) {
-            for (const opt of q.options) {
-                options_hi.push(await translateText(opt));
-            }
-        }
+Requirements:
+1. Translate "question", "options" array, "answer", and "explanation".
+2. Keep "id", "date", "tags", "source", and "link" EXACTLY identical.
+3. The translated "answer" must match one of the translated "options" strings exactly.
+4. Output strictly a valid JSON array matching the original schema.
 
-        // Map correct answer to its translated equivalent
-        let answer_hi = q.answer;
-        if (Array.isArray(q.options) && q.options.includes(q.answer)) {
-            const answerIndex = q.options.indexOf(q.answer);
-            answer_hi = options_hi[answerIndex] || (await translateText(q.answer));
-        } else {
-            answer_hi = await translateText(q.answer);
-        }
+Quizzes to Translate:
+${JSON.stringify(quizzes, null, 2)}
 
-        translatedQuizzes.push({
-            ...q,
-            question: question_hi,
-            options: options_hi,
-            answer: answer_hi,
-            explanation: explanation_hi
-        });
+Return ONLY valid raw JSON array (no markdown code blocks, no backticks):
+`;
+
+    try {
+        const result = await generateWithRetryAndFallback(prompt, curationKey);
+        let rawText = result.response.text().trim();
+        rawText = rawText.replace(/```json/gi, "").replace(/```/g, "").trim();
+
+        const match = rawText.match(/\[[\s\S]*\]/);
+        const jsonStr = match ? match[0] : rawText;
+        const translatedQuizzes = JSON.parse(jsonStr);
+
+        console.log(`✅ Successfully translated ${translatedQuizzes.length} quizzes to Hindi with AI.`);
+        return translatedQuizzes;
+    } catch (error) {
+        console.error("❌ Batch AI quiz translation failed, falling back to original:", error.message);
+        return quizzes;
     }
-
-    return translatedQuizzes;
 }
 
 module.exports = {

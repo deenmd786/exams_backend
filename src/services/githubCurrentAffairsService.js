@@ -1,39 +1,39 @@
 const { getFileFromGithub, updateFileOnGithub, CURRENT_AFFAIRS_REPO } = require('./githubService');
 
 /**
- * Generates folder paths dynamically for English and Hindi:
+ * Returns YYYY-MM-DD strictly in Indian Standard Time (IST)
+ */
+function getISTDateString(dateObj = new Date()) {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(dateObj);
+}
+
+/**
+ * Generates dynamic folder paths for English and Hindi:
  * e.g., 2026/Article/English/09_September_2026.json
- *       2026/Article/Hindi/09_September_2026.json
  */
 function getMonthlyPaths(lang = 'English', dateObj = new Date()) {
-    const year = dateObj.getFullYear();
-    const monthNumber = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const monthName = dateObj.toLocaleString('en-US', { month: 'long' });
+    const istDate = new Date(dateObj.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+    const year = istDate.getFullYear();
+    const monthNumber = String(istDate.getMonth() + 1).padStart(2, '0');
+    const monthName = istDate.toLocaleString('en-US', { month: 'long', timeZone: 'Asia/Kolkata' });
 
     const fileName = `${monthNumber}_${monthName}_${year}.json`;
 
     return {
         year,
         monthName,
-        todayStr: dateObj.toISOString().split('T')[0],
+        todayStr: getISTDateString(dateObj),
         articlePath: `${year}/Article/${lang}/${fileName}`,
         quizPath: `${year}/Quiz/${lang}/${fileName}`
     };
 }
 
-/**
- * Syncs today's curated articles to the monthly article file on GitHub
- */
 async function syncArticlesToGithub(articles, lang = 'English') {
     const { articlePath, todayStr, monthName, year } = getMonthlyPaths(lang);
     console.log(`📤 Syncing ${lang} articles to GitHub: ${articlePath}`);
 
     const existingFile = await getFileFromGithub(articlePath, CURRENT_AFFAIRS_REPO);
-    let monthlyArticles = existingFile ? existingFile.json : [];
-
-    if (!Array.isArray(monthlyArticles)) {
-        monthlyArticles = [];
-    }
+    let monthlyArticles = existingFile && Array.isArray(existingFile.json) ? existingFile.json : [];
 
     const todayEntry = {
         date: todayStr,
@@ -41,7 +41,6 @@ async function syncArticlesToGithub(articles, lang = 'English') {
         articles: articles
     };
 
-    // Replace if today already exists, or append if new day
     const dayIndex = monthlyArticles.findIndex(item => item.date === todayStr);
     if (dayIndex >= 0) {
         monthlyArticles[dayIndex] = todayEntry;
@@ -55,25 +54,15 @@ async function syncArticlesToGithub(articles, lang = 'English') {
     await updateFileOnGithub(articlePath, monthlyArticles, sha, commitMsg, CURRENT_AFFAIRS_REPO);
 }
 
-/**
- * Syncs today's generated quizzes to the monthly quiz file on GitHub
- */
 async function syncQuizzesToGithub(quizzes, lang = 'English') {
     const { quizPath, todayStr, monthName, year } = getMonthlyPaths(lang);
     console.log(`📤 Syncing ${lang} quizzes to GitHub: ${quizPath}`);
 
     const existingFile = await getFileFromGithub(quizPath, CURRENT_AFFAIRS_REPO);
-    let monthlyQuizzes = existingFile ? existingFile.json : [];
+    let monthlyQuizzes = existingFile && Array.isArray(existingFile.json) ? existingFile.json : [];
 
-    if (!Array.isArray(monthlyQuizzes)) {
-        monthlyQuizzes = [];
-    }
-
-    // Filter out duplicate IDs/questions if re-run on the same day
     const newQuizIds = new Set(quizzes.map(q => q.id));
     monthlyQuizzes = monthlyQuizzes.filter(q => !newQuizIds.has(q.id));
-
-    // Append new quizzes
     monthlyQuizzes.push(...quizzes);
 
     const sha = existingFile ? existingFile.sha : null;
@@ -84,5 +73,6 @@ async function syncQuizzesToGithub(quizzes, lang = 'English') {
 
 module.exports = {
     syncArticlesToGithub,
-    syncQuizzesToGithub
+    syncQuizzesToGithub,
+    getISTDateString
 };

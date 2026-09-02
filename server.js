@@ -1,8 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const {
-    runArticlesJob,
-    runQuizzesJob,
+    runMorningPipelineJob,
     runDynamicGkJob,
     runPipelineNow
 } = require('./src/cron/dailyJob');
@@ -12,18 +11,17 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// 1. Root route to display server status and available endpoints
+// 1. Root route
 app.get('/', (req, res) => {
     const secret = process.env.CRON_SECRET || "my_sync_secret_2026";
     res.json({
         status: "Online",
-        message: "Current Affairs & Quiz Task Runner is active.",
+        message: "Current Affairs & Quiz Unified Task Runner is active.",
         endpoints: {
             health: "/api/health",
             ping: "/ping",
             autoTask: `/api/run-task?secret=${secret}`,
-            runArticles: `/api/run-task?secret=${secret}&task=articles`,
-            runQuizzes: `/api/run-task?secret=${secret}&task=quizzes`,
+            morningPipeline: `/api/run-task?secret=${secret}&task=morning`,
             runDynamicGK: `/api/run-task?secret=${secret}&task=gk&index=0`,
             testSyncFull: "/api/test-sync"
         }
@@ -40,7 +38,7 @@ app.get('/ping', (req, res) => {
     res.status(200).send('Awake');
 });
 
-// 3. Smart Dynamic Task Endpoint
+// 3. Smart Dynamic Task Dispatcher
 app.get('/api/run-task', (req, res) => {
     const { secret, task, index } = req.query;
     const expectedSecret = process.env.CRON_SECRET || "my_sync_secret_2026";
@@ -49,17 +47,21 @@ app.get('/api/run-task', (req, res) => {
         return res.status(401).json({ error: "Unauthorized: Invalid secret key" });
     }
 
-    // Acknowledge immediately to prevent caller timeouts
+    // Instantly acknowledge caller to prevent timeouts
     res.status(202).json({ message: "Task request received. Running in background." });
 
     (async () => {
         try {
-            // 1. Manual Override (if task param is provided)
-            if (task === 'articles') return await runArticlesJob();
-            if (task === 'quizzes') return await runQuizzesJob();
-            if (task === 'gk' && index !== undefined) return await runDynamicGkJob(parseInt(index, 10));
+            // 1. Manual Overrides
+            if (task === 'morning' || task === 'articles' || task === 'quizzes') {
+                console.log("🚀 [Manual Task] Running Morning Pipeline (Articles + Quizzes)...");
+                return await runMorningPipelineJob();
+            }
+            if (task === 'gk' && index !== undefined) {
+                return await runDynamicGkJob(parseInt(index, 10));
+            }
 
-            // 2. Automatic Time-Based Dispatcher (IST Timezone)
+            // 2. Automated Time-Based Dispatcher (Asia/Kolkata)
             const now = new Date();
             const istTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }));
             const currentHour = istTime.getHours();
@@ -67,14 +69,11 @@ app.get('/api/run-task', (req, res) => {
             console.log(`⏰ [Auto Task] Current IST Hour: ${currentHour}:30`);
 
             switch (currentHour) {
-                case 3:
-                    console.log("🚀 [Auto Task] 3:30 AM IST -> Generating Daily Articles...");
-                    await runArticlesJob();
-                    break;
                 case 5:
-                    console.log("🚀 [Auto Task] 5:30 AM IST -> Generating Daily Quizzes...");
-                    await runQuizzesJob();
+                    console.log("🚀 [Auto Task] 5:30 AM IST -> Running Complete Morning Pipeline (Articles + Quizzes)...");
+                    await runMorningPipelineJob();
                     break;
+
                 case 7:
                 case 9:
                 case 11:
@@ -84,14 +83,15 @@ app.get('/api/run-task', (req, res) => {
                 case 19:
                 case 21:
                 case 23: {
-                    // Maps 7->0, 9->1, 11->2, 13->3, 15->4, 17->5, 19->6, 21->7, 23->8
+                    // Maps 7->0, 9->1, 11->2, ..., 23->8
                     const gkIndex = (currentHour - 7) / 2;
                     console.log(`🚀 [Auto Task] ${currentHour}:30 IST -> Fact-checking Dynamic GK Index ${gkIndex}...`);
                     await runDynamicGkJob(gkIndex);
                     break;
                 }
+
                 default:
-                    console.log(`ℹ️ [Auto Task] No scheduled task for IST hour ${currentHour}. Server remains idle.`);
+                    console.log(`ℹ️ [Auto Task] Hour ${currentHour}:30 IST has no scheduled work. Server remaining idle.`);
                     break;
             }
         } catch (error) {
@@ -100,7 +100,7 @@ app.get('/api/run-task', (req, res) => {
     })();
 });
 
-// 4. Local testing route (Runs full sync with log output)
+// 4. Local testing route
 app.get('/api/test-sync', async (req, res) => {
     res.json({ message: "Test sync initiated in background. Check terminal logs." });
     try {
@@ -110,7 +110,7 @@ app.get('/api/test-sync', async (req, res) => {
     }
 });
 
-// 5. Catch-all for undefined routes
+// 5. 404 handler
 app.use((req, res) => {
     res.status(404).json({
         error: "Not Found",
