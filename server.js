@@ -6,6 +6,9 @@ const {
     runPipelineNow
 } = require('./src/cron/dailyJob');
 
+// Import the Daily Content service
+const { runDailyContentJob } = require('./src/services/dailyContentService');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -22,6 +25,7 @@ app.get('/', (req, res) => {
             ping: "/ping",
             autoTask: `/api/run-task?secret=${secret}`,
             morningPipeline: `/api/run-task?secret=${secret}&task=morning`,
+            dailyContent: `/api/run-task?secret=${secret}&task=daily`,
             runDynamicGK: `/api/run-task?secret=${secret}&task=gk&index=0`,
             testSyncFull: "/api/test-sync"
         }
@@ -57,6 +61,10 @@ app.get('/api/run-task', (req, res) => {
                 console.log("🚀 [Manual Task] Running Morning Pipeline (Articles + Quizzes)...");
                 return await runMorningPipelineJob();
             }
+            if (task === 'daily') {
+                console.log("🚀 [Manual Task] Running Daily Content Pipeline...");
+                return await runDailyContentJob();
+            }
             if (task === 'gk' && index !== undefined) {
                 return await runDynamicGkJob(parseInt(index, 10));
             }
@@ -69,6 +77,12 @@ app.get('/api/run-task', (req, res) => {
             console.log(`⏰ [Auto Task] Current IST Hour: ${currentHour}:30`);
 
             switch (currentHour) {
+                // Generates Hindi JSON, waits 10s, translates to English, and pushes both
+                case 1:
+                    console.log("🚀 [Auto Task] 1:30 AM IST -> Running Daily Content (Hindi + English)...");
+                    await runDailyContentJob();
+                    break;
+
                 case 5:
                     console.log("🚀 [Auto Task] 5:30 AM IST -> Running Complete Morning Pipeline (Articles + Quizzes)...");
                     await runMorningPipelineJob();
